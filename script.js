@@ -1,26 +1,26 @@
-function nextCommentWrap(i, original, up) {
-	return function() {nextComment(i, original, up);};
-}
-
 var nodeList = document.querySelectorAll(".commentarea > .sitetable > .comment");
 for (var i = 0; i < nodeList.length; i++) {
 	var node = nodeList[i];
 	node.setAttribute("data-comment", i);
 	preencher(node, i);
-	appendLink(node);
+	appendLinkProximo(node);
+	appendLinkHide(node);
+
 	var childList = node.querySelectorAll(".comment");
 	for (var j = 0; j < childList.length; j++) {
 		var child = childList[j];
-		appendLink(child);
-		appendLink(child, 1);
+		appendLinkProximo(child);
+		appendLinkProximo(child, 1);
+		appendLinkHide(child);
 	}
 }
 
-function appendLink(node, up) {
-	var p = node.querySelector("p.tagline");
-	var data = node.getAttribute("data-comment");
-	var link = createLink("proximo", nextCommentWrap(data, "", up));
-	p.appendChild(link);
+function hide(node) {
+	node.style.display = 'none';
+}
+
+function show(node) {
+	node.style.display = '';
 }
 
 function createLink(texto, funcao) {
@@ -31,6 +31,39 @@ function createLink(texto, funcao) {
 		link.onclick = funcao;
 	}
 	return link;
+}
+
+function appendLink(node, link) {
+	var p = node.querySelector("p.tagline");
+	p.appendChild(link);
+}
+
+function createLinkHide(node) {
+	var funcao = function hideWrap(node) {
+		return function() {hide(node);};
+	}
+	var link = createLink("esconder", funcao(node));
+	return link;
+}
+
+function appendLinkHide(node) {
+	var link = createLinkHide(node);
+	appendLink(node, link);
+}
+
+function createLinkProximo(node, up) {
+	var data = node.getAttribute("data-comment");
+	var funcao = function nextCommentWrap(i, original, up) {
+		return function() {nextComment(i, original, up);};
+	}
+
+	var link = createLink("proximo", funcao(data, "", up));
+	return link;
+}
+
+function appendLinkProximo(node, up){
+	var link = createLinkProximo(node, up);
+	appendLink(node, link);
 }
 
 function nextComment(data, original, up) {
@@ -60,8 +93,12 @@ function nextComment(data, original, up) {
 			insertDiv("Não existe");
 		}
 	} else {
-		node.scrollIntoView();
-		insertDiv(original + " > " + data);
+		if (node.style.display == 'none') {
+			nextComment(data, original);
+		} else {
+			node.scrollIntoView();
+			insertDiv(original + " > " + data);
+		}
 	}
 }
 
