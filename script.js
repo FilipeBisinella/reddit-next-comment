@@ -19,11 +19,18 @@ for (var i = 0; i < nodeList.length; i++) {
 function appendLink(node, up) {
 	var p = node.querySelector("p.tagline");
 	var data = node.getAttribute("data-comment");
+	var link = createLink("proximo", nextCommentWrap(data, "", up));
+	p.appendChild(link);
+}
+
+function createLink(texto, funcao) {
 	var link = document.createElement('a');
 	link.href = "javascript:void(0)";
-	link.onclick = nextCommentWrap(data, "", up);
-	link.innerHTML = "proximo";
-	p.appendChild(link);
+	link.innerHTML = texto;
+	if (funcao) {
+		link.onclick = funcao;
+	}
+	return link;
 }
 
 function nextComment(data, original, up) {
