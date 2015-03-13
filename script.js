@@ -5,6 +5,7 @@ for (var i = 0; i < nodeList.length; i++) {
 	preencher(node, i);
 	appendLinkProximo(node);
 	appendLinkHide(node);
+	appendLinkShow(node);
 
 	var childList = node.querySelectorAll(".comment");
 	for (var j = 0; j < childList.length; j++) {
@@ -12,6 +13,7 @@ for (var i = 0; i < nodeList.length; i++) {
 		appendLinkProximo(child);
 		appendLinkProximo(child, 1);
 		appendLinkHide(child);
+		appendLinkShow(child);
 	}
 }
 
@@ -36,6 +38,29 @@ function createLink(texto, funcao) {
 function appendLink(node, link) {
 	var p = node.querySelector("p.tagline");
 	p.appendChild(link);
+}
+
+function createLinkShow(node) {
+	var data = node.getAttribute("data-comment");
+	data = findNextComment(data, -1);
+	var selector = '[data-comment="' + data + '"]';
+	var child = document.querySelector(selector);
+	var funcao;
+	if (child) {
+		funcao = function showWrap(child) {
+			return function() {show(child);};
+		}
+	} else {
+		funcao = function divWrap() {
+			return function() {insertDiv("Não existe");};
+		};
+	}
+	return createLink("mostrar", funcao(child));
+}
+
+function appendLinkShow(node) {
+	var link = createLinkShow(node);
+	appendLink(node, link);
 }
 
 function createLinkHide(node) {
@@ -71,23 +96,13 @@ function nextComment(data, original, up) {
 		original = data;
 	}
 	console.log("atual: " + data);
-	var split = data.split(".");
-	if (up) {
-		split.splice(-1, 1);
-	}
-	var next;
-	if (split.length > 0) {
-		next = parseInt(split[split.length-1],10);
-		next++;
-		split.splice(-1, 1, next);
-	}
-	data = split.join(".");
+	data = findNextComment(data, up);
 	console.log("proximo: " + data);
 	var selector = '[data-comment="' + data + '"]';
 	var node = document.querySelector(selector);
 	if (!node){
 		console.log("nao existe");
-		if (split.length > 0) {
+		if (data.length > 0) {
 			nextComment(data, original, 1);
 		} else {
 			insertDiv("Não existe");
@@ -100,6 +115,26 @@ function nextComment(data, original, up) {
 			insertDiv(original + " > " + data);
 		}
 	}
+}
+
+function findNextComment(data, up) {
+	var split = data.split(".");
+	switch(up) {
+		case 1:
+			split.splice(-1, 1);
+			break;
+		case -1: 
+			split.push(-1);
+			break;
+	}
+	var next;
+	if (split.length > 0) {
+		next = parseInt(split[split.length-1],10);
+		next++;
+		split.splice(-1, 1, next);
+	}
+	data = split.join(".");
+	return data;
 }
 
 function preencher(node, data) {
