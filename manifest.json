@@ -1,0 +1,12 @@
+{
+   "name": "Reddit Next Comment",
+   "version": "1",
+   "manifest_version": 2,
+   "content_scripts": [ {
+      "exclude_globs": [  ],
+      "exclude_matches": [  ],
+      "js": [ "script.js" ],
+      "matches": ["http://www.reddit.com/r/*/comments/*"],
+      "run_at": "document_end"
+   } ]
+}
