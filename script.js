@@ -18,11 +18,13 @@ for (var i = 0; i < nodeList.length; i++) {
 }
 
 function hide(node) {
-	node.style.display = 'none';
+	node.style.height = "23px";
+  	node.style.overflow = "hidden";
 }
 
 function show(node) {
-	node.style.display = '';
+	node.style.height = "";
+  	node.style.overflow = "";
 }
 
 function createLink(texto, funcao) {
@@ -42,20 +44,28 @@ function appendLink(node, link) {
 
 function createLinkShow(node) {
 	var data = node.getAttribute("data-comment");
-	data = findNextComment(data, -1);
-	var selector = '[data-comment="' + data + '"]';
-	var child = document.querySelector(selector);
+	var childList = node.querySelectorAll(":scope > .child > .listing > .comment");
 	var funcao;
-	if (child) {
-		funcao = function showWrap(child) {
-			return function() {show(child);};
-		}
+	if (childList.length > 0) {
+		funcao = function showWrap(node, childList) {
+			return function() {
+				show(node);
+				for (var i = 0; i < childList.length; i++) {
+					var child = childList[i];
+					show(child);
+				}
+
+			};
+		};
 	} else {
-		funcao = function divWrap() {
-			return function() {insertDiv("Não existe");};
+		funcao = function divWrap(node) {
+			return function() {
+				show(node);
+				insertDiv("Não existe");
+			};
 		};
 	}
-	return createLink("mostrar", funcao(child));
+	return createLink("mostrar", funcao(node, childList));
 }
 
 function appendLinkShow(node) {
