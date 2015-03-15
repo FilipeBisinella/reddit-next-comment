@@ -54,7 +54,6 @@ function createLinkShow(node) {
 					var child = childList[i];
 					show(child);
 				}
-
 			};
 		};
 	} else {
@@ -76,7 +75,7 @@ function appendLinkShow(node) {
 function createLinkHide(node) {
 	var funcao = function hideWrap(node) {
 		return function() {hide(node);};
-	}
+	};
 	var link = createLink("esconder", funcao(node));
 	return link;
 }
@@ -90,7 +89,7 @@ function createLinkProximo(node, up) {
 	var data = node.getAttribute("data-comment");
 	var funcao = function nextCommentWrap(i, original, up) {
 		return function() {nextComment(i, original, up);};
-	}
+	};
 
 	var link = createLink("proximo", funcao(data, "", up));
 	return link;
