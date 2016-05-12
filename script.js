@@ -26,7 +26,11 @@ function createLink(texto, funcao) {
 
 function appendLink(node, link) {
 	var p = node.querySelector("p.tagline");
-	p.appendChild(link);
+	var div = document.createElement("div");
+	div.innerHTML = "[";
+	div.appendChild(link);
+	div.innerHTML += "]";
+	p.appendChild(div);
 }
 
 function createLinkProximo(node, up) {
@@ -35,7 +39,11 @@ function createLinkProximo(node, up) {
 		return function() {nextComment(i, original, up);};
 	};
 
-	var link = createLink("proximo", funcao(data, "", up));
+	var texto = "Proximo";
+	if (up !== undefined) {
+		texto += " " + up;
+	}
+	var link = createLink(texto, funcao(data, "", up));
 	return link;
 }
 
