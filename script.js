@@ -2,15 +2,7 @@
 var nodeList = document.querySelectorAll(".commentarea > .sitetable > .comment");
 for (var i = 0; i < nodeList.length; i++) {
 	var node = nodeList[i];
-	preencher(node, i);
-	appendLinkProximo(node);
-
-	var childList = node.querySelectorAll(".comment");
-	for (var j = 0; j < childList.length; j++) {
-		var child = childList[j];
-		appendLinkProximo(child);
-		appendLinkProximo(child, 1);
-	}
+	preencher(node, i.toString());
 }
 
 function createLink(texto, funcao) {
@@ -113,16 +105,24 @@ function findNextComment(data, up, nav) {
 
 function preencher(node, data) {
 	node.setAttribute("data-comment", data);
+	appendLinkProximo(node);
+	// If not a top level comment, add link to go to next top level
+	if (data.length > 1) {
+		appendLinkProximo(node, 1);
+	}
+
 	if (node.querySelector(".child").children.length > 0) {
 		var childList = node.querySelectorAll(":scope > .child > .listing > .comment");
 		for (var i = 0; i < childList.length; i++) {
 			var child = childList[i];
 			var dataChild = data+"."+i;
+			// should never happen, god help us if it does
 			if (!child) {
 				alert(i);
 				alert(data);
 				alert(dataChild);
 			}
+			preencher(child, dataChild);
 		}
 	}
 }
