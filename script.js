@@ -52,17 +52,21 @@ function nextComment(data, original, up) {
 	console.log("proximo: " + data);
 	var selector = '[data-comment="' + data + '"]';
 	var node = document.querySelector(selector);
+	// if next node does not exist
 	if (!node){
 		console.log("nao existe");
+		//go up one and find next, unless is already at top of thread
 		if (data.length > 0) {
 			nextComment(data, original, 1);
 		} else {
 			insertDiv("Não existe");
 		}
 	} else {
+		// if node is hidden, do not navigate (should never happen)
 		if (node.style.display == 'none') {
 			nextComment(data, original);
 		} else {
+			// scroll to next and show div with progress
 			node.scrollIntoView();
 			insertDiv(original + " > " + data);
 		}
