@@ -73,22 +73,31 @@ function nextComment(data, original, up) {
 	}
 }
 
-function findNextComment(data, up) {
+// up defines the number of levels to go up. if = -1, goes to top parent
+// nav defines if just goes up (false) or goes to next (true) [default]
+function findNextComment(data, up, nav) {
+	if (nav === undefined) {
+		nav = true;
+	}
 	// split data into array
 	var split = data.split(".");
-	switch(up) {
-		case 1:
-			// remove last number from array (go up one)
-			split.splice(-1, 1);
-			break;
+
+	if (up == -1) {
+		// top parent is the first value in the array
+		split = split[0];
+	} else {
+		// remove last 'up' digits from array
+		split.splice(-up, up);
 	}
 	var next;
-	if (split.length > 0) {
-		// defines next comment to go to (adding 1 to last number of array)
-		next = parseInt(split[split.length-1],10);
-		next++;
-		// substitues last number in array with the next
-		split.splice(-1, 1, next);
+	if (nav) {
+		if (split.length > 0) {
+			// defines next comment to go to (adding 1 to last number of array)
+			next = parseInt(split[split.length-1],10);
+			next++;
+			// substitues last number in array with the next
+			split.splice(-1, 1, next);
+		}
 	}
 	data = split.join(".");
 	return data;
