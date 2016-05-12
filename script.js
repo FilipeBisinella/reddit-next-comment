@@ -70,19 +70,24 @@ function nextComment(data, original, up) {
 }
 
 function findNextComment(data, up) {
+	// split data into array
 	var split = data.split(".");
 	switch(up) {
 		case 1:
+			// remove last number from array (go up one)
 			split.splice(-1, 1);
 			break;
 		case -1: 
+			//add -1 to end of array
 			split.push(-1);
 			break;
 	}
 	var next;
 	if (split.length > 0) {
+		// defines next comment to go to (adding 1 to last number of array)
 		next = parseInt(split[split.length-1],10);
 		next++;
+		// substitues last number in array with the next
 		split.splice(-1, 1, next);
 	}
 	data = split.join(".");
