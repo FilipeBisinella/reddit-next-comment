@@ -4,27 +4,13 @@ for (var i = 0; i < nodeList.length; i++) {
 	node.setAttribute("data-comment", i);
 	preencher(node, i);
 	appendLinkProximo(node);
-	appendLinkHide(node);
-	appendLinkShow(node);
 
 	var childList = node.querySelectorAll(".comment");
 	for (var j = 0; j < childList.length; j++) {
 		var child = childList[j];
 		appendLinkProximo(child);
 		appendLinkProximo(child, 1);
-		appendLinkHide(child);
-		appendLinkShow(child);
 	}
-}
-
-function hide(node) {
-	node.style.height = "23px";
-  	node.style.overflow = "hidden";
-}
-
-function show(node) {
-	node.style.height = "";
-  	node.style.overflow = "";
 }
 
 function createLink(texto, funcao) {
@@ -42,49 +28,6 @@ function appendLink(node, link) {
 	p.appendChild(link);
 }
 
-function createLinkShow(node) {
-	var data = node.getAttribute("data-comment");
-	var childList = node.querySelectorAll(":scope > .child > .listing > .comment");
-	var funcao;
-	if (childList.length > 0) {
-		funcao = function showWrap(node, childList) {
-			return function() {
-				show(node);
-				for (var i = 0; i < childList.length; i++) {
-					var child = childList[i];
-					show(child);
-				}
-			};
-		};
-	} else {
-		funcao = function divWrap(node) {
-			return function() {
-				show(node);
-				insertDiv("Não existe");
-			};
-		};
-	}
-	return createLink("mostrar", funcao(node, childList));
-}
-
-function appendLinkShow(node) {
-	var link = createLinkShow(node);
-	appendLink(node, link);
-}
-
-function createLinkHide(node) {
-	var funcao = function hideWrap(node) {
-		return function() {hide(node);};
-	};
-	var link = createLink("esconder", funcao(node));
-	return link;
-}
-
-function appendLinkHide(node) {
-	var link = createLinkHide(node);
-	appendLink(node, link);
-}
-
 function createLinkProximo(node, up) {
 	var data = node.getAttribute("data-comment");
 	var funcao = function nextCommentWrap(i, original, up) {
@@ -95,7 +38,7 @@ function createLinkProximo(node, up) {
 	return link;
 }
 
-function appendLinkProximo(node, up){
+function appendLinkProximo(node, up) {
 	var link = createLinkProximo(node, up);
 	appendLink(node, link);
 }
@@ -185,5 +128,7 @@ function createDiv(text) {
 function insertDiv(text) {
 	var div = createDiv(text);
 	document.body.appendChild(div);
-	setTimeout(function(){div.parentNode.removeChild(div);}, 1500);
+	removeDiv = function(div) {div.parentNode.removeChild(div);};
+	div.addEventListener("click", removeDiv.bind(null, div));
+	setTimeout(removeDiv(div), 1500);
 }
