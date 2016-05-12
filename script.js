@@ -2,7 +2,6 @@
 var nodeList = document.querySelectorAll(".commentarea > .sitetable > .comment");
 for (var i = 0; i < nodeList.length; i++) {
 	var node = nodeList[i];
-	node.setAttribute("data-comment", i);
 	preencher(node, i);
 	appendLinkProximo(node);
 
@@ -113,18 +112,17 @@ function findNextComment(data, up, nav) {
 }
 
 function preencher(node, data) {
-	var childList = node.querySelectorAll(":scope > .child > .listing > .comment");
-	for (var i = 0; i < childList.length; i++) {
-		var child = childList[i];
-		var dataChild = data+"."+i;
-		if (!child) {
-			alert(i);
-			alert(data);
-			alert(dataChild);
-		}
-		child.setAttribute("data-comment", dataChild);
-		if (child.querySelector(".child").children.length > 0) {
-			preencher(child, dataChild);
+	node.setAttribute("data-comment", data);
+	if (node.querySelector(".child").children.length > 0) {
+		var childList = node.querySelectorAll(":scope > .child > .listing > .comment");
+		for (var i = 0; i < childList.length; i++) {
+			var child = childList[i];
+			var dataChild = data+"."+i;
+			if (!child) {
+				alert(i);
+				alert(data);
+				alert(dataChild);
+			}
 		}
 	}
 }
