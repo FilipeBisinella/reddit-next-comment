@@ -77,10 +77,6 @@ function findNextComment(data, up) {
 			// remove last number from array (go up one)
 			split.splice(-1, 1);
 			break;
-		case -1: 
-			//add -1 to end of array
-			split.push(-1);
-			break;
 	}
 	var next;
 	if (split.length > 0) {
