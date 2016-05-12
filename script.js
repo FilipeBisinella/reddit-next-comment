@@ -185,5 +185,7 @@ function createDiv(text) {
 function insertDiv(text) {
 	var div = createDiv(text);
 	document.body.appendChild(div);
-	setTimeout(function(){div.parentNode.removeChild(div);}, 1500);
+	removeDiv = function(div) {div.parentNode.removeChild(div);};
+	div.addEventListener("click", removeDiv.bind(null, div));
+	setTimeout(removeDiv(div), 1500);
 }
