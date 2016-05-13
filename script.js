@@ -39,8 +39,8 @@ function appendLink(node, link) {
 
 function createLinkProximo(node, up) {
 	var data = node.getAttribute("data-comment");
-	var funcao = function nextCommentWrap(i, original, up) {
-		return function() {nextComment(i, original, up);};
+	var funcao = function nextCommentWrap(data, original, up) {
+		return function() {nextComment(data, original, up);};
 	};
 
 	var texto = "Proximo";
@@ -51,17 +51,38 @@ function createLinkProximo(node, up) {
 	return link;
 }
 
+function createLinkTop(node) {
+	var data = node.getAttribute('data-comment');
+	var funcao = function nextCommentWrap(data, original, up, nav) {
+		return function() {nextComment(data, original, up, nav);};
+	};
+
+	var texto = "Top";
+	var link = createLink(text, funcao(data, '', -1, false));
+	return link;
+}
+
 function appendLinkProximo(node, up) {
 	var link = createLinkProximo(node, up);
 	appendLink(node, link);
 }
 
-function nextComment(data, original, up) {
+function appendLinkTop(node) {
+	var link = createLinkTop(node);
+	appendLink(node, link);
+}
+
+// navigates to next comment
+// nav defines if just goes up (false) or goes to next (true) [default]
+function nextComment(data, original, up, nav) {
 	if (!original) {
 		original = data;
 	}
+
 	console.log("atual: " + data);
-	data = findNextComment(data, up);
+	
+	data = findNextComment(data, up, nav);
+	
 	console.log("proximo: " + data);
 	var selector = '[data-comment="' + data + '"]';
 	var node = document.querySelector(selector);
