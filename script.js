@@ -76,7 +76,7 @@ function nextComment(data, original, up) {
 // up defines the number of levels to go up. if = -1, goes to top parent
 // nav defines if just goes up (false) or goes to next (true) [default]
 function findNextComment(data, up, nav) {
-	if (nav === undefined) {
+	if (nav === undefined || nav == '') {
 		nav = true;
 	}
 	// split data into array
@@ -86,13 +86,13 @@ function findNextComment(data, up, nav) {
 		// top parent is the first value in the array
 		split = split[0];
 	} else {
-		// remove last 'up' digits from array (same as goiing up 'up' nodes)
+		// remove last 'up' digits from array (same as going up 'up' nodes)
 		split.splice(-up, up);
 	}
-	var next;
 	if (nav) {
 		if (split.length > 0) {
 			// defines next comment to go to (adding 1 to last number of array)
+			var next;
 			next = parseInt(split[split.length-1],10);
 			next++;
 			// substitues last number in array with the next
