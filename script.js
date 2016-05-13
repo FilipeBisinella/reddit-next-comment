@@ -1,3 +1,4 @@
+(function() {
 var nodeList = document.querySelectorAll(".commentarea > .sitetable > .comment");
 for (var i = 0; i < nodeList.length; i++) {
 	var node = nodeList[i];
@@ -24,8 +25,16 @@ function createLink(texto, funcao) {
 }
 
 function appendLink(node, link) {
+	var span = document.createElement("span");
+	var open = document.createTextNode("[");
+	var close = document.createTextNode("]");
+
+	span.appendChild(open);
+	span.appendChild(link);
+	span.appendChild(close);
+
 	var p = node.querySelector("p.tagline");
-	p.appendChild(link);
+	p.appendChild(span);
 }
 
 function createLinkProximo(node, up) {
@@ -34,7 +43,11 @@ function createLinkProximo(node, up) {
 		return function() {nextComment(i, original, up);};
 	};
 
-	var link = createLink("proximo", funcao(data, "", up));
+	var texto = "Proximo";
+	if (up !== undefined) {
+		texto += " " + up;
+	}
+	var link = createLink(texto, funcao(data, "", up));
 	return link;
 }
 
@@ -52,38 +65,52 @@ function nextComment(data, original, up) {
 	console.log("proximo: " + data);
 	var selector = '[data-comment="' + data + '"]';
 	var node = document.querySelector(selector);
+	// if next node does not exist
 	if (!node){
 		console.log("nao existe");
+		//go up one and find next, unless is already at top of thread
 		if (data.length > 0) {
 			nextComment(data, original, 1);
 		} else {
 			insertDiv("Não existe");
 		}
 	} else {
+		// if node is hidden, do not navigate (should never happen)
 		if (node.style.display == 'none') {
 			nextComment(data, original);
 		} else {
+			// scroll to next and show div with progress
 			node.scrollIntoView();
 			insertDiv(original + " > " + data);
 		}
 	}
 }
 
-function findNextComment(data, up) {
+// up defines the number of levels to go up. if = -1, goes to top parent
+// nav defines if just goes up (false) or goes to next (true) [default]
+function findNextComment(data, up, nav) {
+	if (nav === undefined) {
+		nav = true;
+	}
+	// split data into array
 	var split = data.split(".");
-	switch(up) {
-		case 1:
-			split.splice(-1, 1);
-			break;
-		case -1: 
-			split.push(-1);
-			break;
+
+	if (up == -1) {
+		// top parent is the first value in the array
+		split = split[0];
+	} else {
+		// remove last 'up' digits from array
+		split.splice(-up, up);
 	}
 	var next;
-	if (split.length > 0) {
-		next = parseInt(split[split.length-1],10);
-		next++;
-		split.splice(-1, 1, next);
+	if (nav) {
+		if (split.length > 0) {
+			// defines next comment to go to (adding 1 to last number of array)
+			next = parseInt(split[split.length-1],10);
+			next++;
+			// substitues last number in array with the next
+			split.splice(-1, 1, next);
+		}
 	}
 	data = split.join(".");
 	return data;
@@ -127,8 +154,7 @@ function createDiv(text) {
 
 function insertDiv(text) {
 	var div = createDiv(text);
+	setTimeout(function(){div.parentNode.removeChild(div);}, 1500);
 	document.body.appendChild(div);
-	removeDiv = function(div) {div.parentNode.removeChild(div);};
-	div.addEventListener("click", removeDiv.bind(null, div));
-	setTimeout(removeDiv(div), 1500);
 }
+})()
