@@ -25,13 +25,16 @@ function createLink(texto, funcao) {
 }
 
 function appendLink(node, link) {
+	var span = document.createElement("span");
+	var open = document.createTextNode("[");
+	var close = document.createTextNode("]");
+
+	span.appendChild(open);
+	span.appendChild(link);
+	span.appendChild(close);
+
 	var p = node.querySelector("p.tagline");
-	p.appendChild(link);
-	/*var div = document.createElement("div");
-	div.innerHTML = "[";
-	div.appendChild(link);
-	div.innerHTML += "]";
-	p.appendChild(div);*/
+	p.appendChild(span);
 }
 
 function createLinkProximo(node, up) {
