@@ -5,12 +5,15 @@ for (var i = 0; i < nodeList.length; i++) {
 	preencher(node, i.toString());
 }
 
-function createLink(texto, funcao) {
+function createLink(texto, funcao, title) {
 	var link = document.createElement('a');
 	link.href = 'javascript:void(0)';
 	link.innerHTML = texto;
 	if (funcao) {
 		link.onclick = funcao;
+	}
+	if (title) {
+		link.title = title;
 	}
 	return link;
 }
@@ -30,36 +33,31 @@ function appendLink(node, link) {
 
 function createLinkProximo(node, up) {
 	var data = node.getAttribute('data-comment');
-	var funcao = function nextCommentWrap(data, original, up) {
-		return function() {nextComment(data, original, up);};
-	};
-
-	var texto = 'Proximo';
-	if (up !== undefined) {
-		texto += ' ' + up;
-	}
-	var link = createLink(texto, funcao(data, '', up));
-	return link;
-}
-
-function createLinkTop(node) {
-	var data = node.getAttribute('data-comment');
 	var funcao = function nextCommentWrap(data, original, up, nav) {
 		return function() {nextComment(data, original, up, nav);};
 	};
 
-	var texto = 'Top';
-	var link = createLink(text, funcao(data, '', -1, false));
+	var texto;
+
+	var nav;
+	if (up == -1) {
+		texto = 'Top';
+		nav = false;
+	} else {
+		texto = 'Proximo';
+		if (up !== undefined) {
+			texto += ' ' + up;
+		}
+	}
+	var next = findNextComment(data, up ,nav);
+	var hint = data + ' > ' next;
+	var link = createLink(texto, funcao(data, '', up, nav), hint);
+
 	return link;
 }
 
 function appendLinkProximo(node, up) {
 	var link = createLinkProximo(node, up);
-	appendLink(node, link);
-}
-
-function appendLinkTop(node) {
-	var link = createLinkTop(node);
 	appendLink(node, link);
 }
 
@@ -133,7 +131,7 @@ function preencher(node, data) {
 	// If not a top level comment, add link to go to next top level
 	if (data.length > 1) {
 		appendLinkProximo(node, 1);
-		appendLinkTop(node);
+		appendLinkProximo(node, -1);
 	}
 
 	if (node.querySelector('.child').children.length > 0) {
