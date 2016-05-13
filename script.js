@@ -16,15 +16,15 @@ function createLink(texto, funcao) {
 }
 
 function appendLink(node, link) {
-	var span = document.createElement("span");
-	var open = document.createTextNode("[");
-	var close = document.createTextNode("]");
+	var span = document.createElement('span');
+	var open = document.createTextNode('[');
+	var close = document.createTextNode(']');
 
 	span.appendChild(open);
 	span.appendChild(link);
 	span.appendChild(close);
 
-	var p = node.querySelector("p.tagline");
+	var p = node.querySelector('p.tagline');
 	p.appendChild(span);
 }
 
