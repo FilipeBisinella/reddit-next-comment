@@ -48,7 +48,7 @@ function createLinkTop(node) {
 		return function() {nextComment(data, original, up, nav);};
 	};
 
-	var texto = "Top";
+	var texto = 'Top';
 	var link = createLink(text, funcao(data, '', -1, false));
 	return link;
 }
@@ -133,6 +133,7 @@ function preencher(node, data) {
 	// If not a top level comment, add link to go to next top level
 	if (data.length > 1) {
 		appendLinkProximo(node, 1);
+		appendLinkTop(node);
 	}
 
 	if (node.querySelector('.child').children.length > 0) {
