@@ -111,7 +111,7 @@ function preencher(node, data) {
 	node.setAttribute('data-comment', data);
 	appendLinkProximo(node);
 	// If not a top level comment, add link to go to next top level
-	if (data.length > 1) {
+	if (data.split('.').length > 1) {
 		appendLinkProximo(node, 1);
 	}
 
