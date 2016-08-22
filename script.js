@@ -80,7 +80,7 @@ function nextComment(data, original, up) {
 // up defines the number of levels to go up. if = -1, goes to top parent
 // nav defines if just goes up (false) or goes to next (true) [default]
 function findNextComment(data, up, nav) {
-	if (nav === undefined || nav == '') {
+	if (nav === undefined || nav === '') {
 		nav = true;
 	}
 	// split data into array
@@ -155,4 +155,4 @@ function insertDiv(text) {
 	setTimeout(function(){div.parentNode.removeChild(div);}, 1500);
 	document.body.appendChild(div);
 }
-})()
+})();
