@@ -1,5 +1,6 @@
 (function() {
 var nodeList = document.querySelectorAll('.commentarea > .sitetable > .comment');
+
 for (var i = 0; i < nodeList.length; i++) {
 	var node = nodeList[i];
 	preencher(node, i.toString());
@@ -49,8 +50,9 @@ function createLinkProximo(node, up) {
 			texto += ' ' + up;
 		}
 	}
+
 	var next = findNextComment(data, up ,nav);
-	var hint = data + ' > ' next;
+	var hint = data + ' > ' + next;
 	var link = createLink(texto, funcao(data, '', up, nav), hint);
 
 	return link;
@@ -69,7 +71,7 @@ function nextComment(data, original, up, nav) {
 	}
 
 	console.log('atual: ' + data);
-	data = findNextComment(data, up);
+	data = findNextComment(data, up,nav);
 	console.log('proximo: ' + data);
 
 	var selector = '[data-comment="' + data + '"]';
@@ -98,25 +100,31 @@ function nextComment(data, original, up, nav) {
 // up defines the number of levels to go up. if = -1, goes to top parent
 // nav defines if just goes up (false) or goes to next (true) [default]
 function findNextComment(data, up, nav) {
-	if (nav === undefined || nav == '') {
+
+	if (nav === undefined || nav === '') {
 		nav = true;
 	}
+
 	// split data into array
 	var split = data.split('.');
 
 	if (up == -1) {
 		// top parent is the first value in the array
-		split = split[0];
+		// remove all elements beyond first
+		var remove = split.length - 1;
+		split.splice(1,remove);
 	} else {
 		// remove last 'up' digits from array (same as going up 'up' nodes)
 		split.splice(-up, up);
 	}
+
 	if (nav) {
 		if (split.length > 0) {
 			// defines next comment to go to (adding 1 to last number of array)
 			var next;
 			next = parseInt(split[split.length-1],10);
 			next++;
+			
 			// substitues last number in array with the next
 			split.splice(-1, 1, next);
 		}
@@ -128,7 +136,7 @@ function findNextComment(data, up, nav) {
 function preencher(node, data) {
 	node.setAttribute('data-comment', data);
 	appendLinkProximo(node);
-	// If not a top level comment, add link to go to next top level
+	// If not a top level comment, add link to go to next one level up and to go to top
 	if (data.split('.').length > 1) {
 		appendLinkProximo(node, 1);
 		appendLinkProximo(node, -1);
@@ -174,4 +182,4 @@ function insertDiv(text) {
 	setTimeout(function(){div.parentNode.removeChild(div);}, 1500);
 	document.body.appendChild(div);
 }
-})()
+})();
