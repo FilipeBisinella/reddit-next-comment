@@ -6,6 +6,20 @@ for (var i = 0; i < nodeList.length; i++) {
 	preencher(node, i.toString());
 }
 
+var data = '0';
+while (data.length > 0) {
+	var selector = '[data-comment="' + data + '"]';
+	var node = document.querySelector(selector);
+
+	appendLinkProximo(node);
+	// If not a top level comment, add link to go to next one level up and to go to top
+	if (data.split('.').length > 1) {
+		appendLinkProximo(node, 1);
+		appendLinkProximo(node, 99);
+	}
+	data = findNextComment(data,-1,false);
+}
+
 function createLink(texto, funcao, title) {
 	var link = document.createElement('a');
 	link.href = 'javascript:void(0)';
@@ -40,8 +54,8 @@ function createLinkProximo(node, up) {
 
 	var texto;
 
-	var nav;
-	if (up == -1) {
+	var nav = true;
+	if (up == 99) {
 		texto = 'Top';
 		nav = false;
 	} else {
@@ -52,6 +66,9 @@ function createLinkProximo(node, up) {
 	}
 
 	var next = findNextComment(data, up ,nav);
+	if (next === '') {
+		next = 'nao existe';
+	}
 	var hint = data + ' > ' + next;
 	var link = createLink(texto, funcao(data, '', up, nav), hint);
 
@@ -70,25 +87,18 @@ function nextComment(data, original, up, nav) {
 		original = data;
 	}
 
-	console.log('atual: ' + data);
-	data = findNextComment(data, up,nav);
-	console.log('proximo: ' + data);
+	data = findNextComment(data,up,nav);
 
 	var selector = '[data-comment="' + data + '"]';
 	var node = document.querySelector(selector);
+
 	// if next node does not exist
 	if (!node){
-		console.log('nao existe');
-		//go up one and find next, unless is already at top of thread
-		if (data.length > 0) {
-			nextComment(data, original, 1);
-		} else {
-			insertDiv('Não existe');
-		}
+		insertDiv('Não existe');
 	} else {
 		// if node is hidden, do not navigate (should never happen)
 		if (node.style.display == 'none') {
-			nextComment(data, original);
+			alert('hidden comment, run');
 		} else {
 			// scroll to next and show div with progress
 			node.scrollIntoView();
@@ -97,9 +107,31 @@ function nextComment(data, original, up, nav) {
 	}
 }
 
-// up defines the number of levels to go up. if = -1, goes to top parent
-// nav defines if just goes up (false) or goes to next (true) [default]
+// Finds the next comment data that = exists
 function findNextComment(data, up, nav) {
+
+	data = findNextData(data, up,nav);
+
+	if (data.length > 0) {
+		var selector = '[data-comment="' + data + '"]';
+		var node = document.querySelector(selector);
+
+		// if next node does not exist
+		if (!node){
+			//go up one and find next
+			data = findNextComment(data,1,true);
+		}
+	} else {
+		console.log('nao existe');	
+	}
+
+	return data;
+}
+
+// Finds the data comment in order, ignoring its existance
+// up defines the number of levels to go up. if = 99, goes to top parent
+// nav defines if just goes up (false) or goes to next (true) [default]
+function findNextData(data, up, nav) {
 
 	if (nav === undefined || nav === '') {
 		nav = true;
@@ -108,12 +140,18 @@ function findNextComment(data, up, nav) {
 	// split data into array
 	var split = data.split('.');
 
-	if (up == -1) {
+	if (up == 99) {
 		// top parent is the first value in the array
 		// remove all elements beyond first
 		var remove = split.length - 1;
 		split.splice(1,remove);
 	} else {
+		// if going down the thread
+		if (up < 0) {
+			for (var i=1;i<=-up;i++) {
+				split.push(0);
+			}
+		}
 		// remove last 'up' digits from array (same as going up 'up' nodes)
 		split.splice(-up, up);
 	}
@@ -135,12 +173,6 @@ function findNextComment(data, up, nav) {
 
 function preencher(node, data) {
 	node.setAttribute('data-comment', data);
-	appendLinkProximo(node);
-	// If not a top level comment, add link to go to next one level up and to go to top
-	if (data.split('.').length > 1) {
-		appendLinkProximo(node, 1);
-		appendLinkProximo(node, -1);
-	}
 
 	if (node.querySelector('.child').children.length > 0) {
 		var childList = node.querySelectorAll(':scope > .child > .listing > .comment');
