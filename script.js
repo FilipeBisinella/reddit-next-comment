@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         Reddit next comment
-// @version      1.0
-// @description  try to take over the world!
+// @version      2
+// @description  Go to next reddit comment funcionalities
 // @author       You
 // @match        http*://www.reddit.com/r/*/comments/*
+// @downloadURL  https://raw.githubusercontent.com/FilipeBisinella/reddit-next-comment/tampermonkey/script.js
+// @updateURL    https://raw.githubusercontent.com/FilipeBisinella/reddit-next-comment/tampermonkey/script.js
 // @grant        none
 // ==/UserScript==
 
