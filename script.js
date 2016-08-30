@@ -151,9 +151,10 @@ function findNextData(data, up, nav) {
 			for (var i=1;i<=-up;i++) {
 				split.push(0);
 			}
+		} else {
+			// remove last 'up' digits from array (same as going up 'up' nodes)
+			split.splice(-up, up);
 		}
-		// remove last 'up' digits from array (same as going up 'up' nodes)
-		split.splice(-up, up);
 	}
 
 	if (nav) {
@@ -179,12 +180,6 @@ function preencher(node, data) {
 		for (var i = 0; i < childList.length; i++) {
 			var child = childList[i];
 			var dataChild = data+'.'+i;
-			// should never happen, god help us if it does
-			if (!child) {
-				alert(i);
-				alert(data);
-				alert(dataChild);
-			}
 			preencher(child, dataChild);
 		}
 	}
