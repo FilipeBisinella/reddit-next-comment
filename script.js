@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Reddit next comment
-// @version      2.1
+// @version      2.2
 // @description  Go to next reddit comment funcionalities
 // @author       You
 // @match        http*://www.reddit.com/r/*/comments/*
