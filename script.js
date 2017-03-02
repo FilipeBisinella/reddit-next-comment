@@ -20,6 +20,10 @@ while (data.length > 0) {
 	data = findNextComment(data,-1,false);
 }
 
+// Custom styles
+var sheet = createStyle();
+sheet.addRule("p.tagline", "white-space:normal !important");
+
 function createLink(texto, funcao, title) {
 	var link = document.createElement('a');
 	link.href = 'javascript:void(0)';
@@ -208,5 +212,27 @@ function insertDiv(text) {
 	var div = createDiv(text);
 	setTimeout(function(){div.parentNode.removeChild(div);}, 1500);
 	document.body.appendChild(div);
+}
+
+
+//Create custom style sheet
+function createStyle() {
+	var sheet = (function() {
+		// Create the <style> tag
+		var style = document.createElement("style");
+
+		// Add a media (and/or media query) here if you'd like!
+		// style.setAttribute("media", "screen")
+		// style.setAttribute("media", "only screen and (max-width : 1024px)")
+
+		// WebKit hack :(
+		style.appendChild(document.createTextNode(""));
+
+		// Add the <style> element to the page
+		document.head.appendChild(style);
+
+		return style.sheet;
+	})();
+	return sheet;
 }
 })();
